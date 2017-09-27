@@ -1,0 +1,28 @@
+{
+  "name": "readable",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "immutability-helper": "^2.3.1",
+    "js-uuid": "0.0.6",
+    "react": "^15.6.1",
+    "react-bootstrap": "^0.31.3",
+    "react-dom": "^15.6.1",
+    "react-edit-inline": "^1.0.8",
+    "react-edit-inline-textarea": "^1.0.3",
+    "react-modal": "^2.3.2",
+    "react-redux": "^5.0.6",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.0.13",
+    "redux": "^3.7.2",
+    "redux-subscriber": "^1.1.0",
+    "redux-thunk": "^2.2.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
