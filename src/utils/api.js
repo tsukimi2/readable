@@ -22,6 +22,16 @@ export const getPosts = (category) =>
 	fetch(`${API}/${category}/posts`, {headers})
     .then(res => res.json());
 
+export const getAllPostsAndComments = () => (
+	//var promises = []
+	//promises.push(getAllPosts)
+	//promises.push(getComments)
+
+	fetch(`${API}/posts`, {headers})
+    .then(res => res.json())
+ )
+
+
 export const getPost = (post_id) =>
 	fetch(`${API}/posts/${post_id}`, {headers})
 	.then(res => res.json());
@@ -35,7 +45,7 @@ export const addPost = (post) =>
 	.then(res => res.json());
 
 export const deletePost = (post_id) =>
-	fetch(`${API}/posts/${post_id}`, {method: 'DELETE', headers});
+	fetch(`${API}/posts/${post_id}`, {method: 'DELETE', headers})
 //    .then(res => res.json());
 
 export const editPost = (post) =>

@@ -1,6 +1,7 @@
-export const APPNAME = 'READABLE';
-export const HOME = 'HOME';
-export const NEW = 'NEW';
+export const APPNAME = 'READABLE'
+export const HOME = 'HOME'
+export const NEW = 'NEW'
+export const All = 'All'
 
 export const PAGETYPE = {
 	DEFAULT: 0,
@@ -62,5 +63,5 @@ export const compareFunc = (sortby_field) => (
 	(a, b) => {
 		return parseInt(a[sortby_field]) < parseInt(b[sortby_field])
 	}
-);
+)
 

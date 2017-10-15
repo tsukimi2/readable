@@ -28,9 +28,9 @@ const Root = ({ store }) => (
 		<BrowserRouter history={createBrowserHistory()}>
 			<div>
 				<PropsRoute path="/" component={App} />
-				<PropsRoute exact path="/" component={Home} store={store} />
-				<PropsRoute path="/posts/:post_id" component={Post} store={store} />
-				<PropsRoute exact path="/:category" component={Category} store={store} />
+				<PropsRoute exact path="/" component={Home} />
+				<PropsRoute path="/posts/:post_id" component={Post} />
+				<PropsRoute exact path="/:category" component={Category} />
 			</div>
 		</BrowserRouter>
 	</Provider>

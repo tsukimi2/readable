@@ -1,53 +1,94 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import update from 'immutability-helper';
 import ReactModal from 'react-modal';
 import {Panel, Table, Glyphicon, DropdownButton, MenuItem} from 'react-bootstrap';
 import {subscribe} from 'redux-subscriber';
 import {Link} from 'react-router-dom';
 import * as Global from '../utils/global';
-import {updatePostsSortby, getAllPosts, getPosts, deletePost, votePost} from '../actions';
+import {updatePostsSortby,
+	getAllPosts,
+	getPosts,
+	deletePost,
+	votePost,
+	getPostCommentsCount
+} from '../actions';
 import Post from './Post';
 
 
 class PostCol extends Component {
 	constructor() {
-		super(...arguments);
+		super(...arguments)
 		this.state = {
 			posts: [],
+			comments: [],
 			ui: {
 				posts_sortby: Global.POST_FIELD.VOTES,
 				add_post_modal_open: false,
 			}
-		};
+		}
 
-		this.openAddPostModal = this.openAddPostModal.bind(this);
-		this.closeAddPostModal = this.closeAddPostModal.bind(this);
+		this.openAddPostModal = this.openAddPostModal.bind(this)
+		this.closeAddPostModal = this.closeAddPostModal.bind(this)
 
-		const {store} = this.props;
-		this.store = store;
-		this.category = '';
+		this.category = ''
 	}
 
 	vote(post, option) {
-		this.store.dispatch(votePost(post, option));
+		this.props.dispatch(votePost(post, option))
 	}
 
 	getCategory(page) {
-		let category = '';
+		let category = ''
 
 		if(page && page.pagetype === Global.PAGETYPE.CATEGORY) {
-			category = page.title;
+			category = page.title
 		}
 
-		return category;
+		return category
 	}
 
-	componentDidMount() {
+	componentDidMount() {	
 		const {page} = this.props;
 		this.category = this.getCategory(page);
 
 		this.unsubscribe_posts = subscribe('posts', state => {
-			this.setState({ posts: state.posts });
+			const new_posts = state.posts.map(post => ({
+				...post,
+				num_comments: 0
+			}))
+
+			const arr_post_id = state.posts.map(post => {
+				return post.id
+			})
+
+			let promises = []
+			for(let i = 0; i < arr_post_id.length; i++) {
+				promises.push(this.props.dispatch(getPostCommentsCount(arr_post_id[i])))
+			}
+			Promise.all(promises).then(data => {			
+				const arr_post_comments_count = data.map(post_comments => {
+					if(post_comments.comments.length !== 0) {
+						return {
+							post_id: post_comments.comments[0].parentId,
+							num_comments: post_comments.comments.filter(comment => comment.deleted === false).length
+						}
+					}
+
+					return {
+						post_id: null,
+						num_comments: 0
+					}
+				})
+
+				const new_posts_and_comment_count = new_posts.map(post => {
+					return Object.assign(post, arr_post_comments_count.find(post_comments => {
+						return post_comments && post.id === post_comments.post_id
+					}))
+				})
+
+				this.setState(() => ({ posts: new_posts_and_comment_count }))	
+			})	
 		});
 
 		this.unsubscribe_ui_posts_sortby = subscribe('ui.posts_sortby', state => {
@@ -59,7 +100,7 @@ class PostCol extends Component {
 		});
 
 		this.unsubscribe_vote = subscribe('post', state => {
-			if(typeof state.post.voteScore != 'undefined') {
+			if(typeof state.post.voteScore !== 'undefined') {
 				let index = this.state.posts.findIndex(post => (post.id === state.post.id));
 
 				if(index !== -1) {
@@ -74,9 +115,10 @@ class PostCol extends Component {
 		});
 
 		if(page.pagetype === Global.PAGETYPE.DEFAULT) {
-			this.store.dispatch(getAllPosts());		
+			this.props.dispatch(getAllPosts());	
+			
 		} else if(page.pagetype === Global.PAGETYPE.CATEGORY) {
-			this.store.dispatch(getPosts(this.category));
+			this.props.dispatch(getPosts(this.category));
 		}
 	}
 
@@ -87,7 +129,7 @@ class PostCol extends Component {
 	}
 
 	deletePost(post_id) {
-		this.store.dispatch(deletePost(post_id));
+		this.props.dispatch(deletePost(post_id));
 	}
 
 	openAddPostModal() {
@@ -117,7 +159,7 @@ class PostCol extends Component {
 					title={sortby_title}
 					onSelect={
 						function(evt) {
-							that.store.dispatch(updatePostsSortby(evt));
+							that.props.dispatch(updatePostsSortby(evt));
 						}
 					}
 				>
@@ -157,8 +199,10 @@ class PostCol extends Component {
 						<thead>
 							<tr>
 								<th>Delete</th>
+								<th>Edit</th>
 								<th>Category</th>
 								<th>Votes</th>
+								<th>Comments</th>
 								<th>Timestamp</th>
 								<th>Post</th>
 							</tr>
@@ -170,12 +214,17 @@ class PostCol extends Component {
 								const [date, time] = new Date(post.timestamp).toLocaleString('en-US').split(', ');
 								const ts = date + ' ' + time;
 								const to_path = '/posts/' + post.id;
+								const to_path_edit = to_path + '/edit'
 
 								return (
 									<tr key={post.id}>
 										<td><span onClick={this.deletePost.bind(this, post.id)}><Glyphicon glyph="trash" className="cursor-pointer" /></span></td>
+										<td><span>
+											<Link key={post.id} to={to_path_edit}><Glyphicon glyph="pencil" className="cursor-pointer" /></Link>
+										</span></td>
 										<td>{post.category}</td>
 										<td><span onClick={this.vote.bind(this, post, Global.VOTE.UPVOTE)}><Glyphicon glyph="arrow-up" className="cursor-pointer" /></span> {post.voteScore} <span onClick={this.vote.bind(this, post, Global.VOTE.DOWNVOTE)}><Glyphicon glyph="arrow-down" className="cursor-pointer" /></span></td>
+										<td>{post.num_comments}</td>
 										<td>{ts}</td>
 										<td><Link key={post.id} to={to_path}>{post.title}</Link></td>
 									</tr>
@@ -192,8 +241,8 @@ class PostCol extends Component {
 					contentLabel='Modal'
 				>
 					<Post
-						store={this.store}
-						post_id={Global.NEW}
+						is_edit={true}
+						is_existing_post={false}
 						closeAddPostModal={this.closeAddPostModal.bind(this)}
 					/>
 				</ReactModal>
@@ -202,4 +251,13 @@ class PostCol extends Component {
 	}
 }
 
-export default PostCol;
+function mapStateToProps({ ui, posts, post }, {page}) {
+	return {
+		ui,
+		page,
+		posts,
+		post
+	}
+}
+
+export default connect(mapStateToProps)(PostCol);

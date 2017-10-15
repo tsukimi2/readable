@@ -1,45 +1,34 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {changePagetype} from '../actions';
-import CategoryCol from './CategoryCol';
-import PostCol from './PostCol';
-import * as Global from '../utils/global';
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import {changePagetype} from '../actions/page'
+import CategoryCol from './CategoryCol'
+import PostCol from './PostCol'
+import * as Global from '../utils/global'
 
 class Home extends Component {
-	constructor() {
-		super(...arguments);
-		const {store } = this.props;
-		this.store = store;
-
+	constructor() {	
+		super(...arguments)
 		this.state = {
 			page: {
 				pagetype: Global.PAGETYPE.DEFAULT,
-				title: ''
-			}
-		};
+				title: ''				
+			}			
+		}
 	}
 
-	componentDidMount() {
-		this.store.dispatch(changePagetype(Global.PAGETYPE.DEFAULT, ''));
+	componentWillMount() {
+		this.props.dispatch(changePagetype(Global.PAGETYPE.DEFAULT, ''))
 	}
 
 	render() {
-		const {page, store} = this.props;
-
 		return(
 			<div>
-				<CategoryCol store={store}></CategoryCol>
-				<PostCol page={this.state.page} store={store}></PostCol>
+				<CategoryCol></CategoryCol>
+				<PostCol page={this.state.page}></PostCol>
 			</div>
-		);
+		)
 	}
 }
 
-function mapStateToProps(state) {
-	return {
-		page: state.page,
-//		category: null
-	};
-}
-
-export default connect(mapStateToProps)(Home);
+//export default connect(null, { actions })(Home)
+export default connect(null)(Home)

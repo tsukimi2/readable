@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {ListGroup, ListGroupItem, Glyphicon, DropdownButton, MenuItem} from 'react-bootstrap';
 import {subscribe} from 'redux-subscriber';
 import update from 'immutability-helper';
@@ -11,8 +12,7 @@ import NewComment from './NewComment';
 class Comments extends Component {
 	constructor() {
 		super(...arguments);
-		const {store, post_id} = this.props;
-		this.store = store;
+		const { post_id } = this.props;
 		this.post_id = post_id;
 		this.state = {
 			comments: [],
@@ -53,7 +53,7 @@ class Comments extends Component {
 			this.setState({ ui: new_state });
 		});
 
-		this.store.dispatch(getComments(this.post_id));
+		this.props.dispatch(getComments(this.post_id));
 	}
 
 	componentWillUnmount() {
@@ -63,7 +63,7 @@ class Comments extends Component {
 	}
 
 	deleteComment(id) {
-		this.store.dispatch(deleteComment(id));
+		this.props.dispatch(deleteComment(id));
 	}
 
 	customValidateCommentBody(text) {
@@ -79,11 +79,11 @@ class Comments extends Component {
 			}
 		});
 		this.setState({ comments: new_state });
-		this.store.dispatch(editComment(comment_id, comment_body));
+		this.props.dispatch(editComment(comment_id, comment_body));
 	}
 
 	vote(id, opt) {
-		this.store.dispatch(voteComment(id, opt));
+		this.props.dispatch(voteComment(id, opt));
 	}
 
 	renderEmptyCommentList(comments) {
@@ -95,8 +95,9 @@ class Comments extends Component {
 	}
 
 	render() {
+		const that = this
+
 		const sortby_title = this.state.ui.comments_sortby && this.state.ui.comments_sortby.NAME ? this.state.ui.comments_sortby.NAME : '';
-		const store = this.store;
 
 		const arr_filtered_comments = this.state.comments.filter((comment) => comment.deleted === false && comment.parentDeleted === false);
 		const arr_filtered_sorted_comments = Global.immutableSort(arr_filtered_comments, Global.compareFunc(this.state.ui.comments_sortby.VAL));
@@ -114,7 +115,7 @@ class Comments extends Component {
 							title={sortby_title}
 							onSelect={
 								function(evt) {
-									store.dispatch(updateCommentsSortby(evt));
+									that.props.dispatch(updateCommentsSortby(evt));
 								}
 							}
 						>
@@ -147,7 +148,6 @@ class Comments extends Component {
 					})	
 				}
 					<NewComment
-						store={this.store}
 						post_id={this.post_id}
 					></NewComment>
 				</ListGroup>
@@ -156,4 +156,12 @@ class Comments extends Component {
 	}
 }
 
-export default Comments;
+function mapStateToProps({ ui, comments, comment }) {
+	return {
+		ui,
+		comments,
+		comment
+	}
+}
+
+export default connect(mapStateToProps)(Comments)

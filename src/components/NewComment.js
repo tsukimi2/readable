@@ -1,14 +1,14 @@
-import React, {Component} from 'react';
-import {Form, FormGroup, FormControl, Button} from 'react-bootstrap';
-import {subscribe} from 'redux-subscriber';
-import update from 'immutability-helper';
-import {addComment} from '../actions';
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import {Form, FormGroup, FormControl, Button} from 'react-bootstrap'
+import {subscribe} from 'redux-subscriber'
+import update from 'immutability-helper'
+import {addComment} from '../actions'
 
 class NewComment extends Component {
 	constructor() {
 		super(...arguments);
-		const {store, post_id} = this.props;
-		this.store = store;
+		const {post_id} = this.props;
 		this.post_id = post_id;
 		this.state = {
 			comment: {
@@ -47,7 +47,7 @@ class NewComment extends Component {
 	}
 
 	handleSubmitComment() {
-		this.store.dispatch(addComment(this.state.comment, this.post_id));
+		this.props.dispatch(addComment(this.state.comment, this.post_id));
 	}
 
 	canSubmitComment() {
@@ -68,7 +68,6 @@ class NewComment extends Component {
 						User: {'\u00A0'}
 						<input type="text"
 							id="formControlsText"
-							type="text"
 							placeholder="Username"
 							value={this.state.comment.author}
 							onChange={this.handleChangeAuthor.bind(this)}			
@@ -85,4 +84,10 @@ class NewComment extends Component {
 	}
 }
 
-export default NewComment;
+function mapStateToProps({comment}) {
+	return {
+		comment
+	}
+}
+
+export default connect(mapStateToProps)(NewComment);
