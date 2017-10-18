@@ -9,7 +9,7 @@ import Category from './Category';
 import Post from './Post';
 
 const renderMergedProps = (component, ...rest) => {
-  const finalProps = Object.assign({}, ...rest);
+  const finalProps = Object.assign({}, ...rest)
   return (
     React.createElement(component, finalProps)
   );

@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {changePagetype} from '../actions/page'
-import CategoryCol from './CategoryCol'
 import PostCol from './PostCol'
+import CategoryCol from './CategoryCol'
 import * as Global from '../utils/global'
 
 class Home extends Component {
@@ -21,14 +21,15 @@ class Home extends Component {
 	}
 
 	render() {
+		const {page} = this.state
+
 		return(
 			<div>
-				<CategoryCol></CategoryCol>
-				<PostCol page={this.state.page}></PostCol>
+ 				<CategoryCol />			
+				<PostCol page={page} />
 			</div>
 		)
 	}
 }
 
-//export default connect(null, { actions })(Home)
 export default connect(null)(Home)

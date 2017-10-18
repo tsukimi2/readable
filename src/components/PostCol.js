@@ -204,6 +204,7 @@ class PostCol extends Component {
 								<th>Votes</th>
 								<th>Comments</th>
 								<th>Timestamp</th>
+								<th>Author</th>
 								<th>Post</th>
 							</tr>
 						</thead>
@@ -226,6 +227,7 @@ class PostCol extends Component {
 										<td><span onClick={this.vote.bind(this, post, Global.VOTE.UPVOTE)}><Glyphicon glyph="arrow-up" className="cursor-pointer" /></span> {post.voteScore} <span onClick={this.vote.bind(this, post, Global.VOTE.DOWNVOTE)}><Glyphicon glyph="arrow-down" className="cursor-pointer" /></span></td>
 										<td>{post.num_comments}</td>
 										<td>{ts}</td>
+										<td>{post.author}</td>
 										<td><Link key={post.id} to={to_path}>{post.title}</Link></td>
 									</tr>
 								)

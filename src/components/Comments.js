@@ -96,10 +96,11 @@ class Comments extends Component {
 
 	render() {
 		const that = this
+		const {comments} = this.state
 
 		const sortby_title = this.state.ui.comments_sortby && this.state.ui.comments_sortby.NAME ? this.state.ui.comments_sortby.NAME : '';
 
-		const arr_filtered_comments = this.state.comments.filter((comment) => comment.deleted === false && comment.parentDeleted === false);
+		const arr_filtered_comments = comments.filter((comment) => comment.deleted === false && comment.parentDeleted === false);
 		const arr_filtered_sorted_comments = Global.immutableSort(arr_filtered_comments, Global.compareFunc(this.state.ui.comments_sortby.VAL));
 
 		const empty_comment_list = this.renderEmptyCommentList(arr_filtered_sorted_comments);
@@ -107,7 +108,7 @@ class Comments extends Component {
 		return(
 			<div>
 				<div className="pt-5 pb-10">
-					<h3 className="subheader">Comments</h3>
+					<h3 className="subheader">{arr_filtered_sorted_comments.length} Comments</h3>
 					<div className="pull-right">
 						<span>Sort By </span>
 						<DropdownButton
@@ -139,10 +140,12 @@ class Comments extends Component {
 										text={comment.body}
 										paramName="comment_body"
 										change={this.onChangeCommentBody.bind(this, comment.id)}
-									/> <Glyphicon glyph="pencil" />
+									/> <span title="Click on comment title to edit"><Glyphicon glyph="pencil" /></span>
 								</div><br />
-								<div><Glyphicon glyph="thumbs-up" className="cursor-pointer" onClick={this.vote.bind(this, comment.id, Global.VOTE.UPVOTE)} /> <Glyphicon glyph="thumbs-down" className="cursor-pointer" onClick={this.vote.bind(this, comment.id, Global.VOTE.DOWNVOTE)} /> {comment.voteScore}</div>
-								<div>{comment.author} on {dt} <Glyphicon glyph="trash" className="cursor-pointer" onClick={this.deleteComment.bind(this, comment.id)} /></div>
+								<div>
+									<Glyphicon glyph="thumbs-up" className="cursor-pointer" onClick={this.vote.bind(this, comment.id, Global.VOTE.UPVOTE)} /> <Glyphicon glyph="thumbs-down" className="cursor-pointer" onClick={this.vote.bind(this, comment.id, Global.VOTE.DOWNVOTE)} /> {comment.voteScore}
+								</div>
+								<div>{comment.author} on {dt} <span title="test"><Glyphicon glyph="trash" className="cursor-pointer" onClick={this.deleteComment.bind(this, comment.id)} /></span></div>
 							</ListGroupItem>
 						)
 					})	

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
 import {subscribe} from 'redux-subscriber'
-import {Navbar, NavDropdown, Nav, MenuItem} from 'react-bootstrap'
+import {Navbar, NavDropdown, Nav, NavItem, MenuItem} from 'react-bootstrap'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import '../App.css'
@@ -88,38 +88,37 @@ class App extends Component {
 				<Navbar inverse collapseOnSelect>
 					<Navbar.Header>
 						<Navbar.Brand>
-							<span>{Global.APPNAME}</span>
+							<Link to="/">{Global.APPNAME}</Link>
 						</Navbar.Brand>
 						<Navbar.Toggle />
 					</Navbar.Header>
-					<Navbar.Collapse>
-						<Nav>
-							<NavDropdown eventKey={3} title={dropdown_label} id="basic-nav-dropdown">
-								<MenuItem key={Global.All} value={Global.All}><MenuItemAll /></MenuItem>
-								{
-									categories.map(category => {
-										const link_key = 'link_' + category.name
-										const to_path = '/' + category.path
 
-										const LinkCategory = () => (
-											<Link
-												key={link_key}
-												to={to_path}
-											>
-												{category.name}
-											</Link>
-										)
+					<Nav>
+						<NavItem key={Global.All} value={Global.All}><MenuItemAll /></NavItem>
+						{
+							categories.map(category => {
+								const link_key = 'link_' + category.name
+								const to_path = '/' + category.path
 
-										return(
-											<MenuItem key={category.name} value={category.name}>
-												<LinkCategory />
-											</MenuItem>
-										)
-									})			
-								}
-							</NavDropdown>
-						</Nav>
-					</Navbar.Collapse>
+								const LinkCategory = () => (
+									<Link
+										key={link_key}
+										to={to_path}
+									>
+										{category.name}
+									</Link>
+								)
+
+								return(
+									<NavItem key={category.name} value={category.name}>
+										<LinkCategory />
+									</NavItem>
+								)
+							})			
+						}								
+
+					</Nav>
+
 				</Navbar>
   				<MyNav page={page}></MyNav>
   			</div>

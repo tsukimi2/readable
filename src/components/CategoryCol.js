@@ -29,11 +29,6 @@ class CategoryCol extends Component {
 	componentWillUnmount() {
 		this.unsubscribe_state_categories()
 	}
-/*
-	onChangeCategory(category) {
-		updateSelectedCategory(category.name)
-	}
-	*/
 
 	renderCategories(categories) {
 		if(categories.length === 0) {
@@ -78,8 +73,7 @@ class CategoryCol extends Component {
 
 function mapDispatchToProps (dispatch) {
 	return {
-		getCategories: () => dispatch(getCategories()),
-		//updateSelectedCategory: (category) => dispatch(updateSelectedCategory(category))
+		getCategories: () => dispatch(getCategories())
 	}
 }
 
